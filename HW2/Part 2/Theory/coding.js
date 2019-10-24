@@ -8,12 +8,12 @@ function display2_2() {
 }
 
 function display2_5() {
-  var myanswer  = "My answer goes here: here is my my dummy answer" // TODO 2.5: Fill in Answer here
+  var myanswer  = "We are able to see children because we are getting the div by id, and then everything else in div is considered a child, so we add the .children to show all other elements wrapped by 'div_1134'."; // TODO 2.5: Fill in Answer here
   document.getElementById("25answer").innerHTML = myanswer; // Do not change
 }
 
 function countDiv() { // Do not add or remove lines to this function
-    var divs = document.getElementsByTagName("div").length; // TODO: Question 2.3: Use the document Object to get the number of divs in the HTML page. Replace dummyMethod with the correct one.
+    var divs = document.getElementsByTagName("div"); // TODO: Question 2.3: Use the document Object to get the number of divs in the HTML page. Replace dummyMethod with the correct one.
     alert("Number of divs in this page is: " + divs.length); // Do not change
 }
 TagName

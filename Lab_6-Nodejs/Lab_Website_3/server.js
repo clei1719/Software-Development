@@ -190,9 +190,9 @@ app.post('/home/pick_color', function(req, res) {
 /*Add your other get/post request handlers below here: */
 app.get('/team_stats/', function(req, res) {
 	console.log("got here muahahah")
-	var query1 = "select COUNT(*) FROM football_games Where game_date > '2018-01-01';"; //games played in the Fall 2018 Season
-	var query2 = 'select * from football_games;';
-	var query3 = 'select * from football_games;';
+	var query1 = "select * FROM football_games Where game_date > '2018-01-01';"; //games played in the Fall 2018 Season
+	var query2 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score > visitor_score;';
+	var query3 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score < visitor_score;';
 	db.task('get-everything', task => {
 	    return task.batch([
 	        task.any(query1),
@@ -202,6 +202,8 @@ app.get('/team_stats/', function(req, res) {
 	})
 	.then(batch_data => {
 		console.log(batch_data[0]);
+		console.log(batch_data[1]);
+		console.log(batch_data[2]);
 		res.render('pages/team_stats',{
 				my_title: "Page Title Here",
 				result_1: batch_data[0],
