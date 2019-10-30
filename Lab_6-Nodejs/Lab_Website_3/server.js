@@ -235,10 +235,24 @@ app.get('/team_stats/', function(req, res) {
 		});
 });
 
+//Football Player Page:
+/*player_info - get request (no parameters)
+	This route will handle a single query to the football_players table which will retrieve the id & name for all of the football players.
+	Next it will pass this result to the player_info view (pages/player_info), which will use the ids & names to populate the select tag for a form
+
+/player_info/select_player - get request (player_id)
+	This route will handle three queries and a work with a single parameter.
+	Parameter:
+		player_id - this will be a single number that refers to the football player's id.
+	Queries:
+		1. Retrieve the user id's & names of the football players (just like in /player_info)
+		2. Retrieve the specific football player's informatioin from the football_players table
+		3. Retrieve the total number of football games the player has played */
+
 app.get('/player_info/', function(req, res) {
 	console.log("got here muahahah")
-	var query1 = "select * FROM football_games Where game_date > '2018-01-01';"; //games played in the Fall 2018 Season
-	var query2 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score > visitor_score;';
+	var query1 = "SELECT * FROM football_players;"; //games played in the Fall 2018 Season
+	var query2 = 'SELECT (CAST((football_players.rushing_yards) as float) / COUNT(football_players.id)) as games_played FROM football_players INNER JOIN football_games ON football_players.id = ANY (football_games.players) WHERE football_players.name = '*' GROUP BY football_players.rushing_yards;';
 	var query3 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score < visitor_score;';
 	db.task('get-everything', task => {
 	    return task.batch([
@@ -271,7 +285,7 @@ app.get('/player_info/', function(req, res) {
 			})
 
 		});
-}); 
+});
 
 /*********************************
 

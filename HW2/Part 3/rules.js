@@ -189,37 +189,37 @@ function WinnerWinnerChickenDinner()
 
 	if( (a1.innerText == "X" && a2.innerText == "X" && a3.innerText == "X") || (a1.innerText == "O" && a2.innerText == "O" && a3.innerText == "O") )
 	{
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 	else if ( (b1.innerText == "X" && b2.innerText == "X" && b3.innerText == "X") || (b1.innerText == "O" && b2.innerText == "O" && b3.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 	else if ( (c1.innerText == "X" && c2.innerText == "X" && c3.innerText == "X") || (c1.innerText == "O" && c2.innerText == "O" && c3.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 
 	else if ( (a1.innerText == "X" && b1.innerText == "X" && c1.innerText == "X") || (a1.innerText == "O" && b1.innerText == "O" && c1.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 	else if ( (a2.innerText == "X" && b2.innerText == "X" && c2.innerText == "X") || (a2.innerText == "O" && b2.innerText == "O" && c2.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 	else if ( (a3.innerText == "X" && b3.innerText == "X" && c3.innerText == "X") || (a3.innerText == "O" && b3.innerText == "O" && c3.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 
 	else if ( (a1.innerText == "X" && b2.innerText == "X" && c3.innerText == "X") || (a1.innerText == "O" && b2.innerText == "O" && c3.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 	else if ( (a3.innerText == "X" && b2.innerText == "X" && c1.innerText == "X") || (a3.innerText == "O" && b2.innerText == "O" && c1.innerText == "O") ) {
-		whose_move() == 1 ? alert("Player X Wins!") : alert("Player X Wins!")
+		whose_move() == 1 ? alert("Player X Wins!") : alert("Player O Wins!")
 		reset_play()
 	}
 	else if (
