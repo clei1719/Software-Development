@@ -1,0 +1,64 @@
+Clint Eisenzimmer
+No Partner
+
+
+sudo -u postgres psql ---to get into postgres
+create database football_db;
+\c football_db;
+
+Part 5.
+
+1.Write a script to list the Football Players (name & major), organized by major in college:
+SELECT name, major FROM football_players ORDER BY major;
+
+2.Write a script to list all of the Football Players (name & rushing yards) who have 70 or more rushing yards:
+SELECT name, rushing_yards FROM football_players WHERE rushing_yards > 70;
+
+3.Write a script to list all of the games played against Nebraska (show all game information).
+SELECT visitor_name, home_score, visitor_score, game_date, players  FROM football_games a WHERE a.visitor_name = 'Nebraska';
+
+4.Write a script to list all of the games CU Boulder has won.
+SELECT visitor_name, home_score, visitor_score, game_date, players  FROM football_games a WHERE a.home_score > visitor_score;
+
+5.Write a script to list all of the games played in the Fall 2018 Season (show team name & game date).
+SELECT visitor_name, game_date FROM football_games Where game_date > '2018-01-01';
+
+6.Write a script to list the average number of points CU has scored in past games.
+SELECT AVG(home_score) From football_games;
+
+7.Write a script to list the majors of the Football players and calculate how many of them are in each of the majors listed. Rename the column where you calculate the majors to number_of_players.
+SELECT major, COUNT(major) as number_of_players FROM football_players GROUP BY major;
+PASSWORD = postgres
+
+8.Write a script to modify the above query in 5.6 to include only the Football players who are majoring in Computer Science.
+SELECT major, COUNT(major) as number_of_players FROM football_players GROUP BY major HAVING major = 'CSCI';
+
+Part 6.
+1. Write a script to create a view that counts the total number of winning games.
+CREATE VIEW myView1 as SELECT COUNT(home_score) FROM football_games WHERE home_score > visitor_score;
+SELECT * FROM myView1;
+
+2.Write a script to create a view that counts the total number of games played.
+CREATE VIEW myView2 as SELECT COUNT(home_score) FROM football_games;
+SELECT * FROM myView2;
+
+3.Write a script that uses the two views you created (from 6.1 and 6.2) to calculate the percent of wins.
+SELECT myView1.count * 100.0 / myView2.count as result FROM myView1, myView2;
+
+
+
+Part 7.
+1. Write a script that will count how many games "Cedric Vega" has played in during his entire football career. Don't worry about handling multiple Cedric Vegas, you can assume there is only 1 football player named Cedric Vega. This should to simplify your query.
+
+SELECT COUNT(football_players.id) as games_played
+FROM football_players
+         INNER JOIN football_games ON football_players.id = ANY (football_games.players)
+WHERE football_players.name = 'Cedric Vega';
+
+2.Write a script that will calculate the average number of rushing yards for "Cedric Vega", based on the number of games he has played. Don't worry about handling multiple Cedric Vegas, you can assume there is only 1 football player named Cedric Vega. This should to simplify your query.
+
+SELECT (CAST((football_players.rushing_yards) as float) / COUNT(football_players.id)) as games_played
+FROM football_players
+         INNER JOIN football_games ON football_players.id = ANY (football_games.players)
+WHERE football_players.name = 'Cedric Vega' GROUP BY football_players.rushing_yards;
+
