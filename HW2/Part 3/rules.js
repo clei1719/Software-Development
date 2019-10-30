@@ -95,7 +95,7 @@ function begin_play(){
 	}
 	//diables button begin play.
 	else if (game_started() == true) {
-		alert("Bad Monkey dont do that!")
+		alert("Bad Monkey dont do that! Game is already playing.")
 	}
 	else {
 		//disable the name fields and update the player moves as shown in the image
