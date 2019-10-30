@@ -14,3 +14,15 @@ function viewStudentStats(id, toggle)
 		document.getElementById(id).style.height = "auto";
 	}
 }
+
+function WinnerWinnerChickenDinner(item)
+{
+	if(item.home_score > item.visitor_score)
+	{
+		return "CU BOULDER";
+	}
+	else
+	{
+		return item.visitor_name;
+	}
+}

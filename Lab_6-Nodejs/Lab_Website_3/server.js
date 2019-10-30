@@ -21,6 +21,7 @@ const pug = require('pug'); // Add the 'pug' view engine
 //Create Database Connection
 const pgp = require('pg-promise')();
 
+app.use("/resources", express.static("./resources"))
 
 /**********************
 
@@ -204,6 +205,15 @@ app.get('/team_stats/', function(req, res) {
 		console.log(batch_data[0]);
 		console.log(batch_data[1]);
 		console.log(batch_data[2]);
+		// write for loop and use WWCD logic to add a new column
+		for(var i=0; i<batch_data[0].length; i++){
+			if (batch_data[0][i].home_score >  batch_data[0][i].visitor_score) {
+				 batch_data[0][i]["winner"] = "CU_Boulder"
+			} else {
+				batch_data[0][i]["winner"] = batch_data[0][i].visitor_name
+			}
+		}
+		console.log(batch_data[0])
 		res.render('pages/team_stats',{
 				my_title: "Page Title Here",
 				result_1: batch_data[0],
@@ -216,6 +226,44 @@ app.get('/team_stats/', function(req, res) {
 	    // display error message in case an error
 	        req.flash('error', error);
 	        res.render('pages/team_stats',{
+				my_title: "Page Title Here",
+				result_1: '',
+				result_2: '',
+				result_3: ''
+			})
+
+		});
+});
+
+app.get('/player_info/', function(req, res) {
+	console.log("got here muahahah")
+	var query1 = "select * FROM football_games Where game_date > '2018-01-01';"; //games played in the Fall 2018 Season
+	var query2 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score > visitor_score;';
+	var query3 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score < visitor_score;';
+	db.task('get-everything', task => {
+	    return task.batch([
+	        task.any(query1),
+	        task.any(query2),
+	        task.any(query3)
+	    ]);
+	})
+	.then(batch_data => {
+		console.log(batch_data[0]);
+		console.log(batch_data[1]);
+		console.log(batch_data[2]);
+
+		res.render('pages/player_info',{
+				my_title: "Page Title Here",
+				result_1: batch_data[0],
+				result_2: batch_data[1],
+				result_3: batch_data[2]
+			})
+	})
+	.catch(error => {
+		console.log(error)
+	    // display error message in case an error
+	        req.flash('error', error);
+	        res.render('pages/player_info',{
 				my_title: "Page Title Here",
 				result_1: '',
 				result_2: '',

@@ -1,49 +1,54 @@
-//- team_stats.pug
-include ../partials/header.pug
-include ../partials/menu.pug
+doctype html
+html
+  head
+    //- team_stats.pug
+    include ../partials/header.pug
+    include ../partials/menu.pug
 
-div.container
-  br
-  div.jumbotron
-    h1.display-4 Fall 2018 Stats
-    p.lead CU Football Statistics for the 2018 Football Season!
+  body
+    div.container
+      br
+      div.jumbotron
+        h1.display-4 Fall 2018 Stats
+        p.lead CU Football Statistics for the 2018 Football Season!
 
-    table.table.table-bordered#stats_table
-      tr
-        th.align-bottom(rowspan="2") Game Date
-        th.align-bottom(rowspan="2") Opposing Team Name
-        th.text-center(colspan="2") Score
-        th.align-bottom(rowspan="2") Winner
-      tr
-        th Home Score
-        th Opp. Score
-      //- TODO: Iterate over the football_game table data and display the date, name, home score, and visitor score for each row. Determine the winner and display the winner's name in the last column
-      - if(result_1)
-        for item in result_1
+        table.table.table-bordered#stats_table
           tr
-            <td>  #{item.game_date} </td>
-            <td>  #{item.visitor_name} </td>
-            <td>  #{item.home_score} </td>
-            <td> #{item.visitor_score} </td>
-            
-          //- need a break here
+            th.align-bottom(rowspan="2") Game Date
+            th.align-bottom(rowspan="2") Opposing Team Name
+            th.text-center(colspan="2") Score
+            th.align-bottom(rowspan="2") Winner
+          tr
+            th Home Score
+            th Opp. Score
+          //- TODO: Iterate over the football_game table data and display the date, name, home score, and visitor score for each row. Determine the winner and display the winner's name in the last column
+          - if(result_1)
+            for item in result_1
+              tr
+                td #{item.game_date}
+                td #{item.visitor_name}
+                td #{item.home_score}
+                td #{item.visitor_score}
+                td #{item.winner}
+
+              //- need a break here
 
 
 
-    table.table.text-center
-      tr
-        th Wins
-        th Losses
-      tr
-        //- TODO: Display the total number of wins here. This value should come from your server-side db query.
+        table.table.text-center
+          tr
+            th Wins
+            th Losses
+          tr
+            //- TODO: Display the total number of wins here. This value should come from your server-side db query.
 
-        - if(result_2)
-          for item in result_2
-            td #{item.count}
+            - if(result_2)
+              for item in result_2
+                td #{item.count}
 
-        //- TODO: Display the total number of losses here. This value should come from your server-side db query.
+            //- TODO: Display the total number of losses here. This value should come from your server-side db query.
 
-        - if(result_3)
-          for item in result_3
-            td #{item.count}
-  include ../partials/footer.pug
+            - if(result_3)
+              for item in result_3
+                td #{item.count}
+      include ../partials/footer.pug
