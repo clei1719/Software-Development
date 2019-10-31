@@ -158,8 +158,8 @@ app.post('/home/pick_color', function(req, res) {
 	var color_hex = req.body.color_hex;
 	var color_name = req.body.color_name;
 	var color_message = req.body.color_message;
-	//var insert_statement = "INSERT INTO favorite_colors(hex_value, name, color_msg) VALUES('" + color_hex + "','" +
-							//color_name + "','" + color_message +"') ON CONFLICT DO NOTHING;";
+	// var insert_statement = "INSERT INTO favorite_colors(hex_value, name, color_msg) VALUES('" + color_hex + "','" +
+	// 						color_name + "','" + color_message +"') ON CONFLICT DO NOTHING;";
 
 	var color_select = 'select * from favorite_colors;';
 	db.task('get-everything', task => {
@@ -250,9 +250,80 @@ app.get('/team_stats/', function(req, res) {
 		3. Retrieve the total number of football games the player has played */
 
 app.get('/player_info/', function(req, res) {
-	console.log("got here muahahah")
-	var query1 = "SELECT * FROM football_players;"; //games played in the Fall 2018 Season
-	var query2 = 'SELECT (CAST((football_players.rushing_yards) as float) / COUNT(football_players.id)) as games_played FROM football_players INNER JOIN football_games ON football_players.id = ANY (football_games.players) WHERE football_players.name = '*' GROUP BY football_players.rushing_yards;';
+	console.log(req.body)
+	var all_players = "SELECT * FROM football_players;"; //games played in the Fall 2018 Season
+	db.task('get-everything', task => {
+	    return task.batch([
+	        task.any(all_players)
+	    ]);
+	})
+	.then(batch_data => {
+		//console.log(batch_data[0]);
+		//console.log(batch_data[1]);
+		//console.log(batch_data[2]);
+
+		res.render('pages/player_info',{
+				my_title: "Page Title Here",
+				all_players: batch_data[0],
+				player_data: []
+			})
+	})
+	.catch(error => {
+		console.log(error)
+	    // display error message in case an error
+	        req.flash('error', error);
+	        res.render('pages/player_info',{
+				my_title: "Page Title Here",
+				result_1: '',
+				result_2: '',
+				result_3: ''
+			})
+
+		});
+});
+
+app.post('/player_info/select_player', function(req, res) {
+	console.log(req.body)
+	var query1 = "SELECT * FROM football_players" //games played in the Fall 2018 Season
+	console.log(query1)
+	var query2 = `WITH average_rushing AS (
+    SELECT id, (CAST((football_players.rushing_yards) as float) / COUNT(football_players.id)) as avg_rush
+    FROM football_players
+             INNER JOIN football_games ON football_players.id = ANY (football_games.players)
+    GROUP BY football_players.rushing_yards, id),
+average_passing AS (
+    SELECT id, (CAST((football_players.passing_yards) as float) / COUNT(football_players.id)) as avg_pass
+    FROM football_players
+             INNER JOIN football_games ON football_players.id = ANY (football_games.players)
+    GROUP BY football_players.passing_yards, id),
+average_receiving AS (
+    SELECT id, (CAST((football_players.receiving_yards) as float) / COUNT(football_players.id)) as avg_rec
+    FROM football_players
+             INNER JOIN football_games ON football_players.id = ANY (football_games.players)
+    GROUP BY football_players.receiving_yards, id
+     ),
+games_played AS (
+    SELECT id, COUNT(football_players.id) AS games_played
+    FROM football_players
+    INNER JOIN football_games ON football_players.id = ANY (football_games.players)
+    GROUP BY id
+),
+player_info AS (
+    SELECT *
+    FROM football_players
+)
+SELECT player_info.*,
+       games_played.games_played,
+       average_receiving.avg_rec,
+       average_passing.avg_pass,
+       average_rushing.avg_rush
+FROM player_info
+JOIN average_receiving ON player_info.id = average_receiving.id
+JOIN average_passing ON player_info.id = average_passing.id
+JOIN average_rushing ON player_info.id = average_rushing.id
+JOIN games_played ON player_info.id = games_played.id
+WHERE player_info.name = '` + req.body.player_choice + `';`;
+console.log(query2)
 	var query3 = 'SELECT COUNT(*) FROM football_games a WHERE a.home_score < visitor_score;';
 	db.task('get-everything', task => {
 	    return task.batch([
@@ -262,14 +333,14 @@ app.get('/player_info/', function(req, res) {
 	    ]);
 	})
 	.then(batch_data => {
-		console.log(batch_data[0]);
-		console.log(batch_data[1]);
-		console.log(batch_data[2]);
+		//console.log(batch_data[0]);
+		//console.log(batch_data[1]);
+		//console.log(batch_data[2]);
 
 		res.render('pages/player_info',{
 				my_title: "Page Title Here",
-				result_1: batch_data[0],
-				result_2: batch_data[1],
+				all_players: batch_data[0],
+				player_data: batch_data[1],
 				result_3: batch_data[2]
 			})
 	})

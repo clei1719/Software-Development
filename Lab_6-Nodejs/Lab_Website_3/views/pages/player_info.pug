@@ -12,13 +12,10 @@ div.container
 
       img.card-img-top#player_img(src= image_src, alt="Football Player")
       div.card-body.mx-auto
-        form.form(action="/player_info/post", method="get")
+        form.form(action="/player_info/select_player", method="post")
           select.custom-select(name="player_choice", onchange="this.form.submit()")
-            option(selected) Select Player
-            - if(result_1)
-            each item in result_1
-              option
-                #{item.name}
+            each item in all_players
+              option(selected) #{item.name}
             //- TODO: Populate the select with player options. Set the value to the player's id and display the player's name.
 
 
@@ -26,8 +23,8 @@ div.container
       div.table-responsive
         table.table
           //- TODO: Set the player's information. On select, fill in the player's information in each of the field below. You will need to calculate the average rushing, receiving, and passing yards.
-          - if(result_1)
-            for item in result_1
+          - if(player_data)
+            for item in player_data
               tr
                 th Year
                 td #{item.year}
@@ -36,15 +33,15 @@ div.container
                 td #{item.major}
               tr
                 th Games Played
-                td ?
+                td #{item.games_played}
               tr
                 td Passing Yards: #{item.passing_yards}
-                td Avg. Passing Yards: #{}
+                td Avg. Passing Yards:  #{item.avg_pass}
               tr
                 td Rushing Yards: #{item.rushing_yards}
-                td Avg. Rushing Yards:
+                td Avg. Rushing Yards: #{item.avg_rush}
               tr
                 td Receiving Yards: #{item.receiving_yards}
-                td Avg. Receiving Yards:
+                td Avg. Receiving Yards: #{item.avg_rec}
 
 include ../partials/footer.pug
