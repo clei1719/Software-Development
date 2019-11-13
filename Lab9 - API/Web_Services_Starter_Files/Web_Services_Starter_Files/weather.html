@@ -46,6 +46,17 @@
 					    Humidity: <span id="humidity_today">80%</span><br>
 					    Wind Speed: <span id="wind_today">5</span> mph<br>
 					    Summary: <span id="summary_today">Summary Info</span></p>
+
+            <form action="/action_page.php">
+              Latitude:<br>
+              <input id = "Latitude" type="text" name="Latitude" value="23">
+              <br>
+              Longitude:<br>
+              <input id = "Longitude" type="text" name="Longitude" value="">
+              <br><br>
+              <input id = "checkweatherSubmit" type="submit" value="Check Weather">
+            </form>
+
 					</div>
 				</div>
 			</div>
@@ -82,9 +93,41 @@
         var windSpeed = data.currently.windSpeed
         var summary = data.currently.summary
 
+        // Extra
+        var latitude = data.latitude
+        var longitude = data.longitude
+        var inputLat = $("#latitude").value
+        var inputLong =  $("#longitude").value
+
+        // if(input in boxes for lat and long is not empty)
+        // {
+        //   //grab data
+        //   //check
+        // }
+
+        console.log("This is what im looking for")
+        console.log(latitude)
+        console.log(longitude)
+        console.log(inputLat)
+        console.log(inputLong)
+
+
 
         var temp = "";
         temp = temp.concat(data.currently.apparentTemperature)
+        console.log(temp)
+        if(temp > 85)
+        {
+          document.getElementById('thermometer_inner').style.background = "red";
+        }
+        else if (temp < 65) {
+          document.getElementById('thermometer_inner').style.background = "blue";
+        }
+        else {
+          {
+            document.getElementById('thermometer_inner').style.background = "grey";
+          }
+        }
         var percent = temp.concat("%");
         document.getElementById('thermometer_inner').style.height = percent;
 
