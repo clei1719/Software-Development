@@ -1,0 +1,338 @@
+HW3 Software Dev
+
+Create an alphabetical listing (last name, first name) of all employees not living the in the UK who have been employed by Northwinds for at least 5 years as of the due date of this assignment (2019-04-14).
+1. SELECT last_name,first_name,hire_date, country FROM Employees WHERE country !='UK' AND hire_date <= '2014-04-14'::date ORDER BY last_name ASC;
+
+ last_name | first_name | hire_date  | country 
+-----------+------------+------------+---------
+ Callahan  | Laura      | 1994-03-05 | USA
+ Davolio   | Nancy      | 1992-05-01 | USA
+ Fuller    | Andrew     | 1992-08-14 | USA
+ Leverling | Janet      | 1992-04-01 | USA
+ Peacock   | Margaret   | 1993-05-03 | USA
+
+
+Prepare a reorder list for products that currently have at least one unit in stock but are (strictly) below their reorder level. Display the product ID, name, quantity in stock, and unit price for each matching product.
+2.SELECT product_id, product_name, units_in_stock, unit_price FROM Products WHERE units_in_stock >= 1 AND reorder_level > units_in_stock;
+
+ product_id |       product_name        | units_in_stock | unit_price 
+------------+---------------------------+----------------+------------
+          2 | Chang                     |             17 |         19
+          3 | Aniseed Syrup             |             13 |         10
+         11 | Queso Cabrales            |             22 |         21
+         21 | Sir Rodney's Scones       |              3 |         10
+         30 | Nord-Ost Matjeshering     |             10 |      25.89
+         32 | Mascarpone Fabioli        |              9 |         32
+         37 | Gravad lax                |             11 |         26
+         43 | Ipoh Coffee               |             17 |         46
+         45 | Rogede sild               |              5 |        9.5
+         48 | Chocolade                 |             15 |      12.75
+         49 | Maxilaku                  |             10 |         20
+         56 | Gnocchi di nonna Alice    |             21 |         38
+         64 | Wimmers gute Semmelknödel |             22 |      33.25
+         66 | Louisiana Hot Spiced Okra |              4 |         17
+         68 | Scottish Longbreads       |              6 |       12.5
+         70 | Outback Lager             |             15 |         15
+         74 | Longlife Tofu             |              4 |         10
+
+
+What is the name and unit price of the least expensive product sold by Northwinds? Use a subquery.15 rows
+3.SELECT product_name, unit_price FROM Products WHERE unit_price = (SELECT MIN(unit_price) AS SmallestPrice FROM Products);
+
+ product_name | unit_price 
+--------------+------------
+ Geitost      |        2.5
+(1 row)
+
+
+Create a list of the products in stock which have an inventory value (number of units in stock * unit price) under $200. Display the product ID, product name, and “total inventory value” in ascending total inventory value order (lowest to highest).
+4.SELECT product_id, product_name, (unit_price * units_in_stock) as "total inventory value" FROM Products WHERE (unit_price * units_in_stock) < 200 ORDER BY (unit_price * units_in_stock) ASC ;
+
+ product_id |       product_name        | total inventory value 
+------------+---------------------------+-----------------------
+         29 | Thüringer Rostbratwurst   |                     0
+          5 | Chef Anton's Gumbo Mix    |                     0
+         53 | Perth Pasties             |                     0
+         17 | Alice Mutton              |                     0
+         31 | Gorgonzola Telino         |                     0
+         21 | Sir Rodney's Scones       |                    30
+         74 | Longlife Tofu             |                    40
+         45 | Rogede sild               |                  47.5
+         66 | Louisiana Hot Spiced Okra |                    68
+         68 | Scottish Longbreads       |                    75
+         24 | Guaraná Fantástica        |                    90
+          3 | Aniseed Syrup             |                   130
+         13 | Konbu                     |                   144
+         54 | Tourtière                 |      156.449995994568
+         48 | Chocolade                 |                191.25
+(15 rows)
+
+
+List the country and a count of orders for all orders that shipped from that country for all countries other than the USA during August 1996.10 rows
+5.SELECT COUNT(order_id), ship_country FROM Orders WHERE ship_country != 'USA' AND order_date > '1996-07-31' AND order_date < '1996-09-01' GROUP BY ship_country;
+
+ count | ship_country 
+-------+--------------
+     2 | Spain
+     2 | Mexico
+     4 | Brazil
+     1 | UK
+     2 | Italy
+     1 | Venezuela
+     6 | Germany
+     1 | Finland
+     2 | Sweden
+     1 | France
+(10 rows)
+
+
+List the customer ID of the customers who have less than 4 orders in descending alphabetical order (Z-A). 10 rows
+6.SELECT customer_id FROM Orders GROUP BY customer_id HAVING COUNT(customer_id) < 4 ORDER BY customer_id DESC;
+
+ customer_id 
+-------------
+ TRAIH
+ THECR
+ NORTS
+ LAZYK
+ LAUGB
+ GROSR
+ FRANR
+ CONSH
+ CENTC
+ BOLID
+(10 rows)
+
+Create a supplier inventory report that shows the total value of each suppliers inventory in stock (total value = sum over all units of (units in stock * unit price)). List only those suppliers who supply more than 3 different items. 4 rows
+7.SELECT supplier_id, SUM(unit_price * units_in_stock) FROM Products GROUP BY supplier_id HAVING COUNT(product_id) > 3;
+
+ supplier_id |       sum        
+-------------+------------------
+           7 | 4409.65005874634
+          12 | 3301.84996032715
+           2 |  2833.7999420166
+           8 | 4276.99999523163
+(4 rows)
+
+
+Create a supplier price list showing the supplier company name, product name, and unit price for all products from suppliers located in France. Sort the list on unit price in descending order (highest to lowest).
+hint: must use both the products table and the suppliers table. 5 rows
+8.SELECT Suppliers.company_name, Products.product_name, Products.unit_price FROM (Suppliers INNER JOIN Products ON Suppliers.supplier_id = Products.supplier_id) WHERE Suppliers.country = 'France' ORDER BY Products.unit_price  DESC;
+
+        company_name        |      product_name      | unit_price 
+----------------------------+------------------------+------------
+ Aux joyeux ecclésiastiques | Côte de Blaye          |      263.5
+ Gai pâturage               | Raclette Courdavault   |         55
+ Gai pâturage               | Camembert Pierrot      |         34
+ Aux joyeux ecclésiastiques | Chartreuse verte       |         18
+ Escargots Nouveaux         | Escargots de Bourgogne |      13.25
+(5 rows)
+
+
+
+Create an employee order list showing the last name, first name, title, extension, and number of orders for each employee who has less than 75 orders.
+Hint: must use both the employees table and the orders table. 4 rows
+9.SELECT Employees.last_name, Employees.first_name, Employees.title, Employees.extension, COUNT(Orders.order_id) FROM (Employees INNER JOIN Orders ON Employees.employee_id = Orders.employee_id) GROUP BY Employees.last_name, Employees.first_name, Employees.title, Employees.extension HAVING COUNT(Orders.order_id) < 75;
+
+ last_name | first_name |        title         | extension | count 
+-----------+------------+----------------------+-----------+-------
+ Suyama    | Michael    | Sales Representative | 428       |    67
+ Buchanan  | Steven     | Sales Manager        | 3453      |    42
+ King      | Robert     | Sales Representative | 465       |    72
+ Dodsworth | Anne       | Sales Representative | 452       |    43
+(4 rows)
+
+
+Create a NEW table named top_items with the following items: item_id (integer), item_code (integer), item_name (varchar(40)), inventory_date (DATE), supplier_id (integer), item_quantity (integer), and item_price (decimal (9,2)). None of these columns can be null. Include a PRIMARY KEY constraint on item_id. No answer set needed, just the create table command
+10.Create table top_items(
+    item_id integer NOT NULL,
+    item_code integer NOT NULL,
+    item_name varchar(40) NOT NULL,
+    inventory_date date NOT NULL,
+    supplier_id integer NOT NULL,
+    item_quantity integer NOT NULL,
+    item_price decimal(9,2) NOT NULL,
+    PRIMARY KEY(item_id)
+    );
+
+
+
+
+
+Populate the new table top_items with items from products for those products whose inventory value is greater than $2500. The corresponding columns are the following:
+a. product_id -> item_id
+b. category_id -> item_code
+c. product_name -> item_name
+d. -> inventory_date
+e. units_in_stock -> item_quantity
+f. unit_price -> item_price
+g. supplier_id -> supplier_id
+Hint: this entails an INSERT with a SELECT query as the insert value.
+(No answer set needed, just the populate command). 9 rows inserted
+11.INSERT into top_items SELECT product_id,category_id,product_name, current_date ,units_in_stock,unit_price, Products.supplier_id FROM Products WHERE (units_in_stock * unit_price) > 2500;
+
+6	2	Grandma's Boysenberry Spread	2019-11-13	120	25	3.00
+9	6	Mishi Kobe Niku	2019-11-13	29	97	4.00
+12	4	Queso Manchego La Pastora	2019-11-13	86	38	5.00
+18	8	Carnarvon Tigers	2019-11-13	42	62	7.00
+20	3	Sir Rodney's Marmalade	2019-11-13	40	81	8.00
+38	1	Côte de Blaye	2019-11-13	17	264	18.00
+55	6	Pâté chinois	2019-11-13	115	24	25.00
+59	4	Raclette Courdavault	2019-11-13	79	55	28.00
+61	2	Sirop d'érable	2019-11-13	113	28	29.00
+
+
+
+Delete the rows in top_items for items with item_quantity less than 50.
+(No answer set deleted, just the delete command).4 rows deleted
+12.DELETE FROM top_items WHERE item_quantity < 50;
+
+9	6	Mishi Kobe Niku	2019-11-13	29	97	4.00
+18	8	Carnarvon Tigers	2019-11-13	42	62	7.00
+20	3	Sir Rodney's Marmalade	2019-11-13	40	81	8.00
+38	1	Côte de Blaye	2019-11-13	17	264	18.00
+59	4	Raclette Courdavault	2019-11-13	79	55	28.00
+
+
+Add a new column to the top_items table called inventory_value (decimal (9,2)), with a default value of 0.
+No answer set needed, just the column add command
+13.ALTER TABLE top_items ADD inventory_value decimal(9,2) DEFAULT 0 NOT NULL;
+
+9	6	Mishi Kobe Niku	2019-11-13	29	97	4.00	0.00
+18	8	Carnarvon Tigers	2019-11-13	42	62	7.00	0.00
+20	3	Sir Rodney's Marmalade	2019-11-13	40	81	8.00	0.00
+38	1	Côte de Blaye	2019-11-13	17	264	18.00	0.00
+59	4	Raclette Courdavault	2019-11-13	79	55	28.00	0.00
+
+
+Update the top_items table, setting the inventory_value column equal to item_price * item_quantity. No answer set needed, just the update command
+14. UPDATE top_items SET inventory_value = item_price*item_quantity WHERE item_id > 0;
+
+9	6	Mishi Kobe Niku	2019-11-13	29	97	4.00	0.00
+18	8	Carnarvon Tigers	2019-11-13	42	62	7.00	0.00
+20	3	Sir Rodney's Marmalade	2019-11-13	40	81	8.00	0.00
+38	1	Côte de Blaye	2019-11-13	17	264	18.00	0.00
+59	4	Raclette Courdavault	2019-11-13	79	55	28.00	0.00
+
+
+Drop the top_items table. No answer set table, just the drop command
+15. Drop table top_items;
+
+Create a list of employees' first and last names as well as the number of unique customers they have sold to called "clients". Only include employees who have sold to at least 50 unique clients. Display results in descending order by number of clients. 5 rows
+16.SELECT employees.first_name, employees.last_name, count(DISTINCT orders.customer_id) as clients
+FROM orders
+INNER JOIN employees on orders.employee_id = employees.employee_id
+GROUP BY employees.first_name, employees.last_name
+HAVING count(DISTINCT customer_id) > 50;
+
+Andrew	Fuller	59
+Janet	Leverling	63
+Laura	Callahan	56
+Margaret	Peacock	75
+Nancy	Davolio	65
+
+
+Find all products that are cost less than the average unit price. 52 rows
+17.SELECT product_id, product_name FROM Products WHERE unit_price < (SELECT AVG(unit_price) FROM Products);
+
+1	Chai
+2	Chang
+3	Aniseed Syrup
+4	Chef Anton's Cajun Seasoning
+5	Chef Anton's Gumbo Mix
+6	Grandma's Boysenberry Spread
+11	Queso Cabrales
+13	Konbu
+14	Tofu
+15	Genen Shouyu
+16	Pavlova
+19	Teatime Chocolate Biscuits
+21	Sir Rodney's Scones
+22	Gustaf's Knäckebröd
+23	Tunnbröd
+24	Guaraná Fantástica
+25	NuNuCa Nuß-Nougat-Creme
+30	Nord-Ost Matjeshering
+31	Gorgonzola Telino
+33	Geitost
+34	Sasquatch Ale
+35	Steeleye Stout
+36	Inlagd Sill
+37	Gravad lax
+39	Chartreuse verte
+40	Boston Crab Meat
+41	Jack's New England Clam Chowder
+42	Singaporean Hokkien Fried Mee
+44	Gula Malacca
+45	Rogede sild
+46	Spegesild
+47	Zaanse koeken
+48	Chocolade
+49	Maxilaku
+50	Valkoinen suklaa
+52	Filo Mix
+54	Tourtière
+55	Pâté chinois
+57	Ravioli Angelo
+58	Escargots de Bourgogne
+61	Sirop d'érable
+65	Louisiana Fiery Hot Pepper Sauce
+66	Louisiana Hot Spiced Okra
+67	Laughing Lumberjack Lager
+68	Scottish Longbreads
+70	Outback Lager
+71	Flotemysost
+73	Röd Kaviar
+74	Longlife Tofu
+75	Rhönbräu Klosterbier
+76	Lakkalikööri
+77	Original Frankfurter grüne Soße
+
+You’re Jeff Bezos and your employees have access to free Prime subscription. You’ve heard rumors that your employees are letting their neighbors and relatives use Prime. Find count of all employees that’ve ordered products to a different address (not their home address) in their city. 1 row
+18.SELECT COUNT(DISTINCT e.employee_id) FROM Employees AS e LEFT JOIN Orders AS o ON e.employee_id = o.employee_id WHERE o.ship_city = e.city AND o.ship_address != e.address;
+
+6
+
+Create a list of employees and the number of orders they have completed and the number of unique clients sold to during the calendar year of 1998. Your table should display each employee's first and last name, the number of unique clients, and the number of orders as order_count. 9 rows
+19.SELECT e.last_name, e.first_name, COUNT(DISTINCT o.customer_id) AS clients, COUNT(o.order_id) AS order_count FROM Employees AS e LEFT JOIN Orders AS o ON e.employee_id = o.employee_id  WHERE EXTRACT(YEAR FROM o.order_date) = 1998 GROUP BY e.last_name, e.first_name;
+
+Buchanan	Steven	11	13
+Callahan	Laura	23	31
+Davolio	Nancy	32	42
+Dodsworth	Anne	16	19
+Fuller	Andrew	34	39
+King	Robert	21	25
+Leverling	Janet	30	38
+Peacock	Margaret	33	44
+Suyama	Michael	17	19
+
+‘Janet Leverling’ wants to know the count of all the orders which were getting shipped from ‘Sweden’ and took less than a week time to ship. 1 row
+20.SELECT COUNT(order_id)
+FROM Orders
+WHERE ship_country = 'Sweeden'
+  AND 7 >= (SELECT "shipped_date"::date - "order_date"::date);
+
+ count 
+-------
+    15
+(1 row) 
+
+The company ‘Leka Trading’ was blacklisted by the regulators. List out all the product which were being supplied from this supplier. 
+3 rows
+21.SELECT p.product_name
+FROM Products AS p
+         LEFT JOIN Suppliers as s ON p.supplier_id = s.supplier_id
+WHERE s.company_name = 'Leka Trading';
+
+Singaporean Hokkien Fried Mee
+Ipoh Coffee
+Gula Malacca
+
+BONUS:
+Create a list of employee names, the number of orders they have completed, and the number of customers they have sold to called "clients". Only include employees that have either (a) more than 50 clients or (b) more than 70 orders. Your table should display each employee's first and last name, the number of unique clients, and the number of orders as order_count. 6 rows
+1.
+
+Find the average price of products that are supplied by companies that are based in the United States. Specify the name of company alongside the average price. 4 rows
+2.
+
+
